@@ -166,7 +166,7 @@ fn get_ai_move(player: &str, board: [&str; 9]) -> usize {
         5,
         7,
     ];
-    for position in &positions {
+    for position in positions.iter() {
         if board[*position] == BLANK_CELL {
             return *position;
         }
