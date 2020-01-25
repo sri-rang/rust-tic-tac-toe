@@ -37,7 +37,7 @@ fn main() {
             board[get_human_move(PLAYER_01, board)] = PLAYER_01;
             current_player = PLAYER_02;
         } else if current_player == PLAYER_02 {
-            board[get_human_move(PLAYER_02, board)] = PLAYER_02;
+            board[get_ai_move(PLAYER_02, board)] = PLAYER_02;
             current_player = PLAYER_01;
         }
         result = get_result(board);
@@ -82,6 +82,10 @@ fn render_board(board: [&str; 9]) {
     println!(" ");
 }
 
+fn clear_screen() {
+    std::process::Command::new("clear").status().unwrap().success();
+}
+
 fn get_human_move(player: &str, board: [&str; 9]) -> usize {
     println!("{0}'s Turn:", player);
     let mut human_move = read_stdin();
@@ -108,6 +112,63 @@ fn is_valid_move(position: usize, board: [&str; 9]) -> bool {
     return true;
 }
 
-fn clear_screen() {
-    std::process::Command::new("clear").status().unwrap().success();
+fn get_ai_move(player: &str, board: [&str; 9]) -> usize {
+    // is victory possible?
+    for combination in &WINNING_COMBINATIONS {
+        let mut count_player = 0;
+        let mut count_blank = 0;
+        let mut position_blank = 99;
+        for position in combination.iter() {
+            if board[*position] == player {
+                count_player = count_player + 1;
+            } else if board[*position] == BLANK_CELL {
+                count_blank = count_blank + 1;
+                position_blank = *position;
+            }
+        }
+        if count_player == 2 && count_blank == 1 {
+            return position_blank;
+        }
+    }
+
+    // can i block defeat?
+    for combination in &WINNING_COMBINATIONS {
+        let mut count_player = 0;
+        let mut count_blank = 0;
+        let mut position_blank = 99;
+        for position in combination.iter() {
+            if board[*position] != player && board[*position] != BLANK_CELL {
+                count_player = count_player + 1;
+            } else if board[*position] == BLANK_CELL {
+                count_blank = count_blank + 1;
+                position_blank = *position;
+            }
+        }
+        if count_player == 2 && count_blank == 1 {
+            return position_blank;
+        }
+    }
+
+    // what is the best possible move?
+    let positions: [usize; 9] = [
+        // center
+        4,
+        // corners
+        0,
+        2,
+        6,
+        8,
+        // edge-centers
+        1,
+        3,
+        5,
+        7,
+    ];
+    for position in &positions {
+        if board[*position] == BLANK_CELL {
+            return *position;
+        }
+    }
+
+    return 99;
 }
