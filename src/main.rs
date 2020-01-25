@@ -7,6 +7,8 @@ const PLAYER_02: &str = "Y";
 const GAME_ONGOING: &str = "GAME_ONGOING";
 const GAME_DRAW: &str = "GAME_DRAW";
 
+const INVALID_POSITION: usize = 99;
+
 const WINNING_COMBINATIONS: [[usize; 3]; 8] = [
     // rows
     [0, 1, 2],
@@ -117,7 +119,7 @@ fn get_ai_move(player: &str, board: [&str; 9]) -> usize {
     for combination in &WINNING_COMBINATIONS {
         let mut count_player = 0;
         let mut count_blank = 0;
-        let mut position_blank = 99;
+        let mut position_blank = INVALID_POSITION;
         for position in combination.iter() {
             if board[*position] == player {
                 count_player = count_player + 1;
@@ -135,7 +137,7 @@ fn get_ai_move(player: &str, board: [&str; 9]) -> usize {
     for combination in &WINNING_COMBINATIONS {
         let mut count_player = 0;
         let mut count_blank = 0;
-        let mut position_blank = 99;
+        let mut position_blank = INVALID_POSITION;
         for position in combination.iter() {
             if board[*position] != player && board[*position] != BLANK_CELL {
                 count_player = count_player + 1;
@@ -170,5 +172,5 @@ fn get_ai_move(player: &str, board: [&str; 9]) -> usize {
         }
     }
 
-    return 99;
+    return INVALID_POSITION;
 }
